@@ -3,3 +3,6 @@ venv/
 .idea/
 .env
 /docker-compose.yml
+.*
+*.db
+**/__pycache__/

@@ -31,7 +31,7 @@ def make_keyboard_from_minefield(cells: List[List], game_id: str, click_mode: in
                 val = cell["value"]
                 if val == 0:
                     val = "⠀"  # Empty symbol
-                btn = InlineKeyboardButton(text=val, callback_data=IgnoreCallbackFactory(x=x, y=y).pack())
+                btn = InlineKeyboardButton(text=str(val), callback_data=IgnoreCallbackFactory(x=x, y=y).pack())
             kb_row.append(btn)
         keyboard.row(*kb_row)
 

@@ -1,13 +1,15 @@
 import asyncio
 import logging
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, F
 from aiogram.client.telegram import TelegramAPIServer
-from aiogram.dispatcher.fsm.storage.memory import MemoryStorage
-from aiogram.dispatcher.fsm.storage.redis import RedisStorage
-from aiogram.dispatcher.webhook.aiohttp_server import SimpleRequestHandler
+from aiogram.fsm.storage.memory import MemoryStorage
+#from aiogram.fsm.storage.redis import RedisStorage
+from aiogram.webhook.aiohttp_server import SimpleRequestHandler
+from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
+
 from aiohttp import web
-from magic_filter import F
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
@@ -26,13 +28,16 @@ async def main():
     )
 
     # Creating DB engine for PostgreSQL
-    engine = create_async_engine(config.postgres_dsn, future=True, echo=False)
+    engine = create_async_engine(str(config.postgres_dsn), future=True, echo=False)
 
     # Creating DB connections pool
     db_pool = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
     # Creating bot and its dispatcher
-    bot = Bot(token=config.bot_token, parse_mode="HTML")
+    bot = Bot(token=config.bot_token,
+              default=DefaultBotProperties(
+                parse_mode=ParseMode.HTML)
+          )
     if config.custom_bot_api:
         bot.session.api = TelegramAPIServer.from_base(config.custom_bot_api, is_local=True)
 
@@ -40,7 +45,8 @@ async def main():
     if config.bot_fsm_storage == "memory":
         dp = Dispatcher(storage=MemoryStorage())
     else:
-        dp = Dispatcher(storage=RedisStorage.from_url(config.redis_dsn))
+        #dp = Dispatcher(storage=RedisStorage.from_url(config.redis_dsn))
+        pass
 
     # Allow interaction in private chats (not groups or channels) only
     dp.message.filter(F.chat.type == "private")

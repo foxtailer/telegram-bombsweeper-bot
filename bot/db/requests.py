@@ -1,5 +1,5 @@
 from contextlib import suppress
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict
 
 from sqlalchemy import select
@@ -34,7 +34,8 @@ async def log_game(session: AsyncSession, data: Dict, telegram_id: int, status: 
     """
     entry = GameHistoryEntry()
     entry.game_id = data["game_id"]
-    entry.played_at = datetime.utcnow()
+    # entry.played_at = datetime.utcnow()
+    entry.played_at = datetime.now(timezone.utc)
     entry.telegram_id = telegram_id
     entry.field_size = data["game_data"]["size"]
     entry.victory = status == "win"

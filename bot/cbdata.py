@@ -1,6 +1,4 @@
-from aiogram.dispatcher.filters.callback_data import CallbackData
-
-from bot.minesweeper.states import ClickMode
+from aiogram.filters.callback_data import CallbackData
 
 
 class NewGameCallbackFactory(CallbackData, prefix="newgame"):

@@ -1,10 +1,11 @@
 from typing import Callable, Awaitable, Dict, Any
 
 from aiogram import BaseMiddleware, html
-from aiogram.dispatcher.flags.getter import get_flag
+from aiogram.dispatcher.flags import get_flag
 from aiogram.types import CallbackQuery
 
-from bot.cbdata import ClickCallbackFactory, SwitchFlagCallbackFactory, SwitchModeCallbackFactory
+from bot.cbdata import ClickCallbackFactory, SwitchFlagCallbackFactory,\
+    SwitchModeCallbackFactory
 
 
 class CheckActiveGameMiddleware(BaseMiddleware):
@@ -15,7 +16,8 @@ class CheckActiveGameMiddleware(BaseMiddleware):
             data: Dict[str, Any],
     ) -> Any:
         """
-        Check whether game is active. This middleware is intended for CallbackQuery only!
+        Check whether game is active. This middleware is intended for 
+        CallbackQuery only!
         """
         need_check_handler = get_flag(data, "need_check_game")
         if not need_check_handler:
@@ -25,20 +27,23 @@ class CheckActiveGameMiddleware(BaseMiddleware):
         fsm_game_id = user_data.get("game_id")
         if not fsm_game_id:
             await event.message.edit_text(
-                text=f"{html.italic('This game is no longer accessible')}",
+                text=html.italic('This game is no longer accessible'),
                 reply_markup=None
             )
             return
         else:
             callback_data = data.get("callback_data")
-            if isinstance(callback_data, (ClickCallbackFactory, SwitchFlagCallbackFactory, SwitchModeCallbackFactory)):
+            if isinstance(callback_data,
+                          (ClickCallbackFactory, SwitchFlagCallbackFactory, 
+                           SwitchModeCallbackFactory)):
                 if callback_data.game_id != fsm_game_id:
                     await event.message.edit_text(
                         text=f"{html.italic('This game is no longer accessible')}",
                         reply_markup=None
                     )
                     await event.answer(
-                        text="This game is inaccessible, because there is more recent one!",
+                        text="This game is inaccessible, because "\
+                            "there is more recent one!",
                         show_alert=True
                     )
                     return

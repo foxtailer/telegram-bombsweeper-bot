@@ -1,5 +1,6 @@
 from aiogram import Router, types
 from sqlalchemy.ext.asyncio import AsyncSession
+from aiogram.filters.command import Command
 
 from bot.db.models import GameHistoryEntry
 from bot.db.requests import get_games_by_id
@@ -7,7 +8,7 @@ from bot.db.requests import get_games_by_id
 router = Router()
 
 
-@router.message(commands=["stats"])
+@router.message(Command("stats"))
 async def show_stats(message: types.Message, session: AsyncSession):
     """
     Get player personal statistics
